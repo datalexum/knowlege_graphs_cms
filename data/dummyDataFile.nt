@@ -1,0 +1,7 @@
+<https://raw.githubusercontent.com/maribelacosta/linkeddata/master/data/alan_turing.ttl#Alan_Turing> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "Dummy" .
+
+<https://raw.githubusercontent.com/maribelacosta/linkeddata/master/data/alan_turing.ttl#Alan_Turing> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "TestValue" .
+
+<https://raw.githubusercontent.com/maribelacosta/linkeddata/master/data/alan_turing.ttl#Alan_Turing> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "DiDaDuplicate" .
+
+<https://raw.githubusercontent.com/maribelacosta/linkeddata/master/data/alan_turing.ttl#Alan_Turing> <https://raw.githubusercontent.com/maribelacosta/linkeddata/master/data/alan_turing.ttl#discipline> "DiDaDuplicate" .
