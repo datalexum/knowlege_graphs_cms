@@ -5,12 +5,13 @@ if __name__ == '__main__':
 
     datalist = [["https://raw.githubusercontent.com/maribelacosta/linkeddata/master/data/alan_turing.ttl","ttl"]]
     Loader = DatabaseLoader(datalist)
+
     Loader.add_Databases([["../data/dummyDataFile.nt",""]])
 
     data_graph = Loader.return_Databases()
     #print(data)
-    for triple in data_graph:
-        print(triple)
+    #for triple in data_graph:
+    #    print(triple)
 
     #join_query = """
     #PREFIX ac:  <https://raw.githubusercontent.com/maribelacosta/linkeddata/master/data/alan_turing.ttl#>

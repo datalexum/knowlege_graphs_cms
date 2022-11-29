@@ -29,3 +29,6 @@ class CMS:
 
     def _add(self, row, col):
         self.cms[row, col] += 1
+
+    def printCMS(self):
+        print(self.cms)
