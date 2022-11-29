@@ -8,7 +8,7 @@ class CMS:
     def __init__(self, width: int, depth: int, seeds=None):
         self.width = width
         self.depth = depth
-        self.cms = np.zeros([self.depth, self.width])
+        self.cms = np.zeros([self.depth, self.width], dtype=int)
         self.seeds = seeds
         if self.seeds is None:
             self.seeds = np.random.randint(sys.maxsize, size=self.depth)
@@ -25,7 +25,6 @@ class CMS:
         for row, seed in enumerate(self.seeds):
             col = mmh3.hash(obj, seed) % self.width
             temp_values.append(self.cms[row, col])
-        print(temp_values)
         return min(temp_values)
 
     def _add(self, row, col):

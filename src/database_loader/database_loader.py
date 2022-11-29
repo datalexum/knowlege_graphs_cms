@@ -9,9 +9,9 @@ class DatabaseLoader:
         self.dataBase = rdflib.Graph()
 
         for linkidx, link in enumerate(dataBaseLinksList):
-            #print(linkidx)
-            #print(link)
-            #print(dataBaseLinksList[linkidx][1])
+            # print(linkidx)
+            # print(link)
+            # print(dataBaseLinksList[linkidx][1])
 
             if dataBaseLinksList[linkidx][1] == "":
                 self.dataBase.parse(dataBaseLinksList[linkidx][0])
@@ -20,7 +20,6 @@ class DatabaseLoader:
             else:
                 print("Unknown database type")
         print("Database created")
-
 
     def add_Databases(self, dataBaseLinksList: list):
         print(dataBaseLinksList)
@@ -35,7 +34,5 @@ class DatabaseLoader:
 
         print("Database changed")
 
-
     def return_Databases(self):
         return self.dataBase
-

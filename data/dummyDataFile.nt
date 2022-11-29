@@ -2,7 +2,7 @@
 <http://dbpedia.org/resource/Alan_Turing> <https://raw.githubusercontent.com/maribelacosta/linkeddata/master/data/alan_turing.ttl#discipline> "obj_obj_join" .
 
 <https://raw.githubusercontent.com/maribelacosta/linkeddata/master/data/alan_turing.ttl#Alan_Turing> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> "obj_sub_join" .
-<https://raw.githubusercontent.com/maribelacosta/linkeddata/master/data/alan_turing.ttl#Alan_Turing> <https://raw.githubusercontent.com/maribelacosta/linkeddata/master/data/alan_turing.ttl#discipline> "obj_sub_join" .
+<https://raw.githubusercontent.c om/maribelacosta/linkeddata/master/data/alan_turing.ttl#Alan_Turing> <https://raw.githubusercontent.com/maribelacosta/linkeddata/master/data/alan_turing.ttl#discipline> "obj_sub_join" .
 
 <https://raw.githubusercontent.com/maribelacosta/linkeddata/master/data/alan_turing.ttl#Alan_Turing> <http://www.w3.org/1999/02/22-rdf-syntax-ns#type> <https://raw.githubusercontent.com/maribelacosta/linkeddata/master/data/alan_turing.ttl#University_of_Cambridge> .
 <https://raw.githubusercontent.com/maribelacosta/linkeddata/master/data/alan_turing.ttl#Alan_Turing> <https://raw.githubusercontent.com/maribelacosta/linkeddata/master/data/alan_turing.ttl#discipline> <https://raw.githubusercontent.com/maribelacosta/linkeddata/master/data/alan_turing.ttl#University_of_Cambridge> .

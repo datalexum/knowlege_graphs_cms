@@ -55,9 +55,10 @@ if __name__ == '__main__':
     print("Results for obj obj")
     for result in o_o_results:
         print(f"{result.sub1} {result.obj} {result.sub2}")
-    print("Results for obj sub")
-    for result in o_s_results:
-        print(f"{result.sub} {result.obj}")
-    print("Results for bound obj sub")
+    #print("Results for obj sub")
+    #for result in o_s_results:
+    #    print(f"{result.sub} {result.obj}")
+    #print("Results for bound obj sub")
     for result in bound_o_s_results:
         print(f"{result.sub}")
+    print(len(o_o_results))
