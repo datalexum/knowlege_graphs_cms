@@ -19,6 +19,7 @@ if __name__ == '__main__':
     # for result in o_o_results:
     #    print(f"{result.sub1} {result.obj} {result.sub2}")
     # print(len(o_o_results))
+
     o_o_cms_p1 = CMS(10, 2)
     o_o_cms_p2 = CMS(10, 2)
 

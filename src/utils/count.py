@@ -58,7 +58,7 @@ def count_subject_object(cms_predicate1: CMS, cms_predicate2: CMS, predicate1, p
 
     objects = list(set([result.obj for result in p1_result]))
     count = 0
-    for result in set(p1_result):
+    for result in results:
         print(result)
         c1 = cms_predicate1.get_min(result.obj)
         c2 = cms_predicate2.get_min(result.sub)
