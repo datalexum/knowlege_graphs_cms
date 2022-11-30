@@ -1,4 +1,5 @@
 <https://test.com/whatever#subject> <https://test.com/whatever#predicate> <https://test.com/whatever#object>.
+<https://test.com/whatever#test> <https://test.com/whatever#predicate> <https://test.com/whatever#meme>.
 <https://test.com/whatever#subject> <https://test.com/whatever#predicate2> <https://test.com/whatever#object>.
 <https://test.com/whatever#subject2> <https://test.com/whatever#predicate> <https://test.com/whatever#object>.
 <https://test.com/whatever#subject2> <https://test.com/whatever#predicate2> <https://test.com/whatever#object>.

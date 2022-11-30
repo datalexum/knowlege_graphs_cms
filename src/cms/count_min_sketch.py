@@ -11,7 +11,7 @@ class CMS:
         self.cms = np.zeros([self.depth, self.width], dtype=int)
         self.seeds = seeds
         if self.seeds is None:
-            self.seeds = np.random.randint(sys.maxsize, size=self.depth)
+            self.seeds = np.random.randint(10000, size=self.depth)#sys.maxsize, size=self.depth)
         elif depth != len(seeds):
             print("Error, Anzahl der übergebnen Hashfunktionen != depth des CMS")
 

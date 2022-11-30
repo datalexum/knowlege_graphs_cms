@@ -82,7 +82,7 @@ def bound_object_subject_join(data_graph, predicate1, predicate2, object1, pred_
     #print(join_query)
     return data_graph.query(join_query)
 
-def predicate_query(data_graph, predicate1):
+def o_o_predicate_query(data_graph, predicate1):
 
 
     query = """
@@ -93,3 +93,15 @@ def predicate_query(data_graph, predicate1):
     }
     """
     return data_graph.query(query)
+
+#def o_s_predicate_query(data_graph, predicate1, predicate2):
+#
+#
+#    query = """
+#    SELECT ?sub ?obj
+#    WHERE
+#    {
+#        ?sub """ + predicate1 + """ ?obj.
+#    }
+#    """
+#    return data_graph.query(query)
