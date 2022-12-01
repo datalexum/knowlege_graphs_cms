@@ -31,6 +31,7 @@ if __name__ == '__main__':
 
     print(f"CMS Result: {o_o_cms_result}, Query Result: {o_o_query_result}")
 
+
     o_s_cms_p1 = CMS(10, 2)
     o_s_cms_p2 = CMS(10, 2)
 
