@@ -1,3 +1,4 @@
+
 import numpy as np
 from src.utils.hash import MMH3, HashFunctionGenerator
 import numpy as np
@@ -30,7 +31,6 @@ class CMS:
         self.cms = np.zeros([self.depth, self.width], dtype=int)
         self.cms_copy = np.zeros([self.depth, self.width], dtype=int)
 
-
     def count(self, obj: str):
         for row, function in enumerate(self.hash_functions):
             col = function(obj)
@@ -43,18 +43,11 @@ class CMS:
             temp_values.append(self.cms[row, col])
         return min(temp_values)
 
-    def remove_noise(self):
+    def remove_noise(self, operation):
         self.cms_copy = np.copy(self.cms)
-        for row in self.cms_copy:
-            print("Before",row)
-            row = np.subtract(row, np.amin(row))
-            print("After",row)
-    def noise_removal_get_min(self, obj: str) -> int:
-        temp_values = []
-        for row, function in enumerate(self.hash_functions):
-            col = function(obj)
-            temp_values.append(self.cms_copy[row, col])
-        return min(temp_values)
+        print("Before",self.cms_copy)
+        self.cms_copy = np.subtract(self.cms_copy, operation(self.cms_copy))
+        print("After",self.cms_copy)
 
     def _add(self, row, col):
         self.cms[row, col] += 1
