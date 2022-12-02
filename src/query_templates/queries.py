@@ -43,7 +43,7 @@ def object_subject_join(data_graph, predicate1, predicate2, pred_prefix_1, pred_
     WHERE 
     {
         ?sub """ + pre1 + predicate1 + """ ?obj.
-        ?sub """ + pre2 + predicate2 + """ ?obj.
+        ?obj """ + pre2 + predicate2 + """ ?obj2.
     }
     """
     #print("obj sub")
@@ -74,8 +74,8 @@ def bound_object_subject_join(data_graph, predicate1, predicate2, object1, pred_
     SELECT ?sub 
     WHERE 
     {
-        ?sub """ + pre1 + predicate1 + """ """ + pre3 + object1+""".
-        ?sub """ + pre2 + predicate2 + """ """ + pre3 + object1+""".
+        ?sub """ + pre1 + predicate1 + """ ?obj.
+        ?obj """ + pre2 + predicate2 + """ """+ pre3 + object1+""".
     }
     """
     #print("bound obj sub")
