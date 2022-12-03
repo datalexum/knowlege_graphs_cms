@@ -12,7 +12,7 @@ class CMS:
             self.hash_functions = hash_functions
             if self.increment_decrement:
                 if len(self.hash_functions) % 2 != 0:
-                    raise Exception('To use increment and decrement you need to supply an even anmount of hash '
+                    raise CMSInputError('To use increment and decrement you need to supply an even anmount of hash '
                                     'functions!')
                 self.depth = len(self.hash_functions) / 2
             else:
@@ -25,14 +25,14 @@ class CMS:
                     for i in range(anmount):
                         self.hash_functions.append(hash_function_generator.get_function(self.width))
                 else:
-                    raise Exception('If you generate hash functions in CMS you have to provide seeds or depth.')
+                    raise CMSInputError('If you generate hash functions in CMS you have to provide seeds or depth.')
             else:
                 if len(seeds) % 2 != 0:
-                    raise Exception('To use increment and decrement you need to supply an even anmount of seeds!')
+                    raise CMSInputError('To use increment and decrement you need to supply an even anmount of seeds!')
                 for seed in seeds:
                     self.hash_functions.append(hash_function_generator.get_function(self.width, seed))
         else:
-            raise Exception("Either depth, hash_functions, or seeds has to be set!")
+            raise CMSInputError("Either depth, hash_functions, or seeds has to be set!")
         self.depth = len(self.hash_functions)
         self.cms = np.zeros([self.depth, self.width], dtype=int)
         self.cms_copy = np.zeros([self.depth, self.width], dtype=int)
@@ -70,3 +70,8 @@ class CMS:
 
     def printCMS(self):
         print(self.cms)
+
+
+class CMSInputError(Exception):
+    """Raised when the CMS gets supplied by a forbidden input."""
+    pass
