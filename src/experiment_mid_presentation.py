@@ -4,9 +4,10 @@ from src.cms.count_min_sketch import CMS
 from src.database_loader.database_loader import DatabaseLoader
 from src.query_templates.queries import object_object_join
 import numpy as np
-
-from src.utils.count import count_object_object
+from src.utils.count import count_object_object,noise_count_object_object
 from utils.hash import BasicHashFunctionGenerator
+from rdflib import Graph
+
 
 # TODO set prefix, check predicates
 NUMBER_RUNS = 5
@@ -16,6 +17,9 @@ PREFIX = ''
 CMS_WIDTH = 20
 CMS_DEPTH = 4
 
+optimize_sparql()
+store = HDTGraph("../watdiv/watdiv_10M_lars.hdt")
+graph = Graph(store=HDTStore("../watdiv/watdiv_10M_lars.hdt")
 
 def ground_truth(graph):
     return len(object_object_join(data_graph=graph, predicate1=PREDICATE_1, predicate2=PREDICATE_2,
@@ -56,9 +60,24 @@ def independent_addsub(graph):
     return results
 
 
-def independent_noiserem(graph):
+def independent_noiserem_min(graph):
     results = []
-    # TODO Add Noise Removal run
+    for i in range(NUMBER_RUNS):
+        logging.info(f"Noise Removal Approach - Starting {i}/{NUMBER_RUNS}")
+        cms_1 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH)
+        cms_2 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH)
+        count = noise_count_object_object(cms_1, cms_2, PREDICATE_1, PREDICATE_2, graph, np.amin)
+        results.append(count)
+    return results
+
+def independent_noiserem_median(graph):
+    results = []
+    for i in range(NUMBER_RUNS):
+        logging.info(f"Noise Removal Approach - Starting {i}/{NUMBER_RUNS}")
+        cms_1 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH)
+        cms_2 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH)
+        count = noise_count_object_object(cms_1, cms_2, PREDICATE_1, PREDICATE_2, graph,np.median)
+        results.append(count)
     return results
 
 
@@ -89,22 +108,32 @@ def main():
 
     print()
 
-    logging.info('Starting independent CMS count...')
+    logging.info('Starting independent addsub CMS count...')
     addsub_counts = independent_addsub(data_graph)
     addsub_count = np.mean(addsub_counts)
     logging.info('...Independent CMS count finished.')
 
     print()
 
-    logging.info('Starting independent CMS count...')
-    noiserem_counts = independent_noiserem(data_graph)
-    noiserem_count = np.mean(noiserem_counts)
+    logging.info('Starting independent noise removal min CMS count...')
+    noiserem_min_counts = independent_noiserem_min(data_graph)
+    noiserem_min_count = np.mean(noiserem_min_counts)
     logging.info('...Independent CMS count finished.')
+
+    print()
+
+    logging.info('Starting independent noise removal min CMS count...')
+    noiserem_median_counts = independent_noiserem_min(data_graph)
+    noiserem_median_count = np.mean(noiserem_median_counts)
+    logging.info('...Independent CMS count finished.')
+
+    print()
 
     results = {"Naive": naive_count,
                "Independent": indep_count,
                "Add/Sub": addsub_count,
-               "Noise Removal": noiserem_count}
+               "Noise Removal min": noiserem_min_count,
+               "Noise Removal median": noiserem_median_count}
 
     print()
 
@@ -115,8 +144,9 @@ def main():
     logging.info(
         f"Add/Sub:             {addsub_count} Estimation Rate: {(results['Add/Sub'] / ground_count) * 100: .2f}%")
     logging.info(
-        f"Noise Removal:       {noiserem_count} Estimation Rate: {(results['Noise Removal'] / ground_count) * 100: .2f}%")
-
+        f"Noise Removal:       {noiserem_min_count} Estimation Rate: {(results['Noise Removal'] / ground_count) * 100: .2f}%")
+    logging.info(
+        f"Noise Removal:       {noiserem_median_count} Estimation Rate: {(results['Noise Removal'] / ground_count) * 100: .2f}%")
     best = list(results.keys())[np.argmin(np.abs(np.array(list(results.values())) - 100))]
 
     print()

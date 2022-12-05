@@ -1,8 +1,8 @@
 from database_loader.database_loader import DatabaseLoader
 from query_templates.queries import object_object_join
 from src.cms.count_min_sketch import CMS
-from utils.count import noise_min_count_object_object,noise_median_count_object_object
-
+from utils.count import noise_count_object_object
+import numpy as np
 
 if __name__ == '__main__':
     Loader = DatabaseLoader([["../data/cardinality_testing.nt", ""]])
@@ -18,8 +18,8 @@ if __name__ == '__main__':
     o_o_cms_p1 = CMS(10, 2)
     o_o_cms_p2 = CMS(10, 2)
 
-    o_o_cms_result = noise_min_count_object_object(o_o_cms_p1, o_o_cms_p2, "<https://test.com/whatever#predicate>",
-                                     "<https://test.com/whatever#predicate2>", data_graph)
+    o_o_cms_result = noise_count_object_object(o_o_cms_p1, o_o_cms_p2, "<https://test.com/whatever#predicate>",
+                                     "<https://test.com/whatever#predicate2>", data_graph,np.amin)
 
     o_o_query_result = len(object_object_join(data_graph=data_graph, predicate1="predicate", predicate2="predicate2",
                                       pred_prefix_1=pred_prefix_1, pred_prefix_2=pred_prefix_2))
@@ -31,8 +31,8 @@ if __name__ == '__main__':
     o_o_cms_p1 = CMS(10, 2)
     o_o_cms_p2 = CMS(10, 2)
 
-    o_o_cms_result = noise_median_count_object_object(o_o_cms_p1, o_o_cms_p2, "<https://test.com/whatever#predicate>",
-                                     "<https://test.com/whatever#predicate2>", data_graph)
+    o_o_cms_result = noise_count_object_object(o_o_cms_p1, o_o_cms_p2, "<https://test.com/whatever#predicate>",
+                                     "<https://test.com/whatever#predicate2>", data_graph,np.median)
 
     o_o_query_result = len(object_object_join(data_graph=data_graph, predicate1="predicate", predicate2="predicate2",
                                       pred_prefix_1=pred_prefix_1, pred_prefix_2=pred_prefix_2))
