@@ -27,11 +27,11 @@ def count_object_object(cms_predicate1: CMS, cms_predicate2: CMS, predicate1, pr
 
     count = 0
     for obj in objects:
-        print(obj)
+        #(obj)
         c1 = cms_predicate1.get_min(obj)
         c2 = cms_predicate2.get_min(obj)
-        print(f"sketch p1: {obj}: {c1}")
-        print(f"sketch p2: {obj}: {c2}")
+        #print(f"sketch p1: {obj}: {c1}")
+        #print(f"sketch p2: {obj}: {c2}")
         count += c1 * c2
     return count
 

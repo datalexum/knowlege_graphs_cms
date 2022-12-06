@@ -58,9 +58,10 @@ class CMS:
 
     def remove_noise(self, operation):
         self.cms_copy = np.copy(self.cms)
-        print("Before", self.cms_copy)
+        #print("Before", self.cms_copy)
         self.cms_copy = np.subtract(self.cms_copy, operation(self.cms_copy))
-        print("After", self.cms_copy)
+        np.where(self.cms_copy < 0, self.cms_copy, 0)
+        #print("After", self.cms_copy)
 
     def _add(self, row, col):
         self.cms[row, col] += 1

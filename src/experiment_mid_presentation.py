@@ -11,19 +11,19 @@ from rdflib import Graph
 
 # TODO set prefix, check predicates
 NUMBER_RUNS = 5
-PREDICATE_1 = 'gn:parentCountry'
-PREDICATE_2 = 'sorg:nationality'
-PREFIX = ''
-CMS_WIDTH = 20
-CMS_DEPTH = 4
+PREDICATE_1 = 'parentCountry'
+PREDICATE_2 = 'nationality'
+PREFIX_1 = '<http://www.geonames.org/ontology#>'
+PREFIX_2 = '<http://schema.org/>'
+WHOLE_PREDICATE_1 = '<http://www.geonames.org/ontology#parentCountry>'
+WHOLE_PREDICATE_2 = '<http://schema.org/nationality>'
+CMS_WIDTH = 16
+CMS_DEPTH = 2
 
-optimize_sparql()
-store = HDTGraph("../watdiv/watdiv_10M_lars.hdt")
-graph = Graph(store=HDTStore("../watdiv/watdiv_10M_lars.hdt")
 
 def ground_truth(graph):
     return len(object_object_join(data_graph=graph, predicate1=PREDICATE_1, predicate2=PREDICATE_2,
-                                  pred_prefix_1=PREFIX, pred_prefix_2=PREFIX))
+                                  pred_prefix_1=PREFIX_1, pred_prefix_2=PREFIX_2))
 
 
 def naive_run(graph):
@@ -33,7 +33,7 @@ def naive_run(graph):
         bhg = BasicHashFunctionGenerator()
         cms_1 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH, hash_function_generator=bhg)
         cms_2 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH, hash_function_generator=bhg)
-        count = count_object_object(cms_1, cms_2, PREDICATE_1, PREDICATE_2, graph)
+        count = count_object_object(cms_1, cms_2, WHOLE_PREDICATE_1, WHOLE_PREDICATE_2, graph)
         results.append(count)
     return results
 
@@ -44,7 +44,7 @@ def independent_hash(graph):
         logging.info(f"Independent Approach - Starting {i}/{NUMBER_RUNS}")
         cms_1 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH)
         cms_2 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH)
-        count = count_object_object(cms_1, cms_2, PREDICATE_1, PREDICATE_2, graph)
+        count = count_object_object(cms_1, cms_2, WHOLE_PREDICATE_1, WHOLE_PREDICATE_2, graph)
         results.append(count)
     return results
 
@@ -55,7 +55,7 @@ def independent_addsub(graph):
         logging.info(f"Add/Sub Approach - Starting {i}/{NUMBER_RUNS}")
         cms_1 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH * 2, increment_decrement=True)
         cms_2 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH * 2, increment_decrement=True)
-        count = count_object_object(cms_1, cms_2, PREDICATE_1, PREDICATE_2, graph)
+        count = count_object_object(cms_1, cms_2, WHOLE_PREDICATE_1, WHOLE_PREDICATE_2, graph)
         results.append(count)
     return results
 
@@ -66,7 +66,7 @@ def independent_noiserem_min(graph):
         logging.info(f"Noise Removal Approach - Starting {i}/{NUMBER_RUNS}")
         cms_1 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH)
         cms_2 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH)
-        count = noise_count_object_object(cms_1, cms_2, PREDICATE_1, PREDICATE_2, graph, np.amin)
+        count = noise_count_object_object(cms_1, cms_2, WHOLE_PREDICATE_1, WHOLE_PREDICATE_2, graph, np.amin)
         results.append(count)
     return results
 
@@ -76,17 +76,17 @@ def independent_noiserem_median(graph):
         logging.info(f"Noise Removal Approach - Starting {i}/{NUMBER_RUNS}")
         cms_1 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH)
         cms_2 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH)
-        count = noise_count_object_object(cms_1, cms_2, PREDICATE_1, PREDICATE_2, graph,np.median)
+        count = noise_count_object_object(cms_1, cms_2, WHOLE_PREDICATE_1, WHOLE_PREDICATE_2, graph, np.median)
         results.append(count)
     return results
 
 
 def main():
-    # TODO change to WatDiv
-    datalist = [["../data/yago-1.0.0-turtle.ttl",
-                 "ttl"]]
-    Loader = DatabaseLoader(datalist)
-    data_graph = Loader.return_Databases()
+    #TODO: Untersuchen: Add/Sub ist bei einem groß genugen CMS schlechter, noise removal bei zu kleinen?
+    #
+    optimize_sparql()
+
+    data_graph = Graph(store=HDTStore("../watdiv/watdiv_10M_lars.hdt"))
 
     logging.info('Calculating ground truth...')
     ground_count = ground_truth(data_graph)
