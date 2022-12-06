@@ -16,8 +16,8 @@ PREFIX_1 = '<http://www.geonames.org/ontology#>'
 PREFIX_2 = '<http://schema.org/>'
 WHOLE_PREDICATE_1 = '<http://www.geonames.org/ontology#parentCountry>'
 WHOLE_PREDICATE_2 = '<http://schema.org/nationality>'
-CMS_WIDTH = 16
-CMS_DEPTH = 2
+CMS_WIDTH = 32
+CMS_DEPTH = 4
 
 
 def ground_truth(graph):
@@ -80,6 +80,28 @@ def independent_noiserem_median(graph):
         results.append(count)
     return results
 
+def naive_noiserem_median(graph):
+    results = []
+    for i in range(NUMBER_RUNS):
+        logging.info(f"Naive Approach - Starting {i}/{NUMBER_RUNS}")
+        bhg = BasicHashFunctionGenerator()
+        cms_1 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH, hash_function_generator=bhg)
+        cms_2 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH, hash_function_generator=bhg)
+        count = noise_count_object_object(cms_1, cms_2, WHOLE_PREDICATE_1, WHOLE_PREDICATE_2, graph, np.median)
+        results.append(count)
+    return results
+
+def naive_noiserem_min(graph):
+    results = []
+    for i in range(NUMBER_RUNS):
+        logging.info(f"Naive Approach - Starting {i}/{NUMBER_RUNS}")
+        bhg = BasicHashFunctionGenerator()
+        cms_1 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH, hash_function_generator=bhg)
+        cms_2 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH, hash_function_generator=bhg)
+        count = noise_count_object_object(cms_1, cms_2, WHOLE_PREDICATE_1, WHOLE_PREDICATE_2, graph, np.amin)
+        results.append(count)
+    return results
+
 
 def main():
     #TODO: Untersuchen: Add/Sub ist bei einem groß genugen CMS schlechter, noise removal bei zu kleinen?
@@ -129,24 +151,35 @@ def main():
 
     print()
 
+    logging.info('Starting naive noise removal min CMS count...')
+    noiserem_naive_min_counts = naive_noiserem_min(data_graph)
+    noiserem_naive_min_count = np.mean(noiserem_median_counts)
+    logging.info('...naive CMS count finished.')
+
+    print()
+
+    logging.info('Starting naive noise removal median CMS count...')
+    noiserem_naive_median_counts = naive_noiserem_median(data_graph)
+    noiserem_naive_median_count = np.mean(noiserem_median_counts)
+    logging.info('...naive CMS count finished.')
+
+    print()
+
+
+
     results = {"Naive": naive_count,
                "Independent": indep_count,
                "Add/Sub": addsub_count,
                "Noise Removal min": noiserem_min_count,
-               "Noise Removal median": noiserem_median_count}
-
-    print()
+               "Noise Removal median": noiserem_median_count,
+               "Noise Removal min naive": noiserem_naive_min_count,
+               "Noise Removal median naive": noiserem_naive_median_count}
 
     logging.info(f"Ground Truth:        {ground_count} Estimation Rate: 100%")
-    logging.info(f"Naive:               {naive_count} Estimation Rate: {(results['Naive'] / ground_count) * 100: .2f}%")
-    logging.info(
-        f"Independent:         {indep_count} Estimation Rate: {(results['Independent'] / ground_count) * 100: .2f}%")
-    logging.info(
-        f"Add/Sub:             {addsub_count} Estimation Rate: {(results['Add/Sub'] / ground_count) * 100: .2f}%")
-    logging.info(
-        f"Noise Removal min:       {noiserem_min_count} Estimation Rate: {(results['Noise Removal min'] / ground_count) * 100: .2f}%")
-    logging.info(
-        f"Noise Removal median:       {noiserem_median_count} Estimation Rate: {(results['Noise Removal median'] / ground_count) * 100: .2f}%")
+    for key in results:
+        logging.info(
+            f"{key}:\t\t\t{results[key]}\tEstimation Rate: {(results[key] / ground_count) * 100: .2f}%")
+
     best = list(results.keys())[np.argmin(np.abs(np.array(list(results.values())) / ground_count - 1))]
 
     print()
