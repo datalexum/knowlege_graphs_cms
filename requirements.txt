@@ -2,3 +2,5 @@ numpy
 rdflib
 mmh3
 pycryptodome
+pybind11
+rdflib-hdt

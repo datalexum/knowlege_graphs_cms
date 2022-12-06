@@ -67,7 +67,10 @@ class CMS:
         self.cms[row, col] += 1
 
     def _sub(self, row, col):
-        self.cms[row, col] -= 1
+        if self.cms[int(row), col] < 2:
+            self.cms[int(row), col] = 0
+        else:
+            self.cms[int(row), col] += -1
 
     def printCMS(self):
         print(self.cms)

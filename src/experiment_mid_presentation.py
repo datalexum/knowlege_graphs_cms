@@ -1,15 +1,14 @@
 import logging
 
+from rdflib_hdt import optimize_sparql, HDTStore
+
 from src.cms.count_min_sketch import CMS
-from src.database_loader.database_loader import DatabaseLoader
 from src.query_templates.queries import object_object_join
 import numpy as np
-from src.utils.count import count_object_object,noise_count_object_object
+from src.utils.count import count_object_object, noise_count_object_object
 from utils.hash import BasicHashFunctionGenerator
 from rdflib import Graph
 
-
-# TODO set prefix, check predicates
 NUMBER_RUNS = 5
 PREDICATE_1 = 'parentCountry'
 PREDICATE_2 = 'nationality'
@@ -69,6 +68,7 @@ def independent_noiserem_min(graph):
         count = noise_count_object_object(cms_1, cms_2, WHOLE_PREDICATE_1, WHOLE_PREDICATE_2, graph, np.amin)
         results.append(count)
     return results
+
 
 def independent_noiserem_median(graph):
     results = []
@@ -144,10 +144,10 @@ def main():
     logging.info(
         f"Add/Sub:             {addsub_count} Estimation Rate: {(results['Add/Sub'] / ground_count) * 100: .2f}%")
     logging.info(
-        f"Noise Removal:       {noiserem_min_count} Estimation Rate: {(results['Noise Removal'] / ground_count) * 100: .2f}%")
+        f"Noise Removal min:       {noiserem_min_count} Estimation Rate: {(results['Noise Removal min'] / ground_count) * 100: .2f}%")
     logging.info(
-        f"Noise Removal:       {noiserem_median_count} Estimation Rate: {(results['Noise Removal'] / ground_count) * 100: .2f}%")
-    best = list(results.keys())[np.argmin(np.abs(np.array(list(results.values())) - 100))]
+        f"Noise Removal median:       {noiserem_median_count} Estimation Rate: {(results['Noise Removal median'] / ground_count) * 100: .2f}%")
+    best = list(results.keys())[np.argmin(np.abs(np.array(list(results.values())) / ground_count - 1))]
 
     print()
 
