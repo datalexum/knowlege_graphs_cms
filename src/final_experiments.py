@@ -41,7 +41,7 @@ PREFIXES = [[PREFIX_1, PREFIX_2], [], []]
 optimize_sparql()
 data_graph = Graph(store=HDTStore(DATA_PATH))
 
-GROUND_TRUTH = []  # TODO Add ground truth
+GROUND_TRUTH = []  # TODO Finish ground truth
 
 _calc_count = len(HASH_FUNCTION_GENERATORS) * 2 * NUMBER_RUNS * (len(QUERY_WITH_NOISE) + len(QUERY_WITHOUT_NOISE) * 2)
 
