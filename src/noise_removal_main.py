@@ -5,7 +5,7 @@ from utils.count import noise_count_object_object
 import numpy as np
 
 if __name__ == '__main__':
-    Loader = DatabaseLoader([["../data/cardinality_testing.nt", ""]])
+    Loader = DatabaseLoader([["../data/b_o_s_cardinality_testing.nt", ""]])
 
     data_graph = Loader.return_Databases()
     # for triple in data_graph:

@@ -4,7 +4,7 @@ from _csv import reader
 import mmh3
 
 from cms.count_min_sketch import CMS
-from utils.hash import BasicHashFunctionGenerator, MultiplicationHashFunctionGenerator
+from utils.hash import BasicHashFunction, MultiplicationHashFunctionGenerator
 
 
 if __name__ == '__main__':

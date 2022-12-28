@@ -4,7 +4,7 @@ from src.cms.count_min_sketch import CMS
 from utils.count import count_object_object,count_subject_object
 
 if __name__ == '__main__':
-    Loader = DatabaseLoader([["../data/cardinality_testing.nt", ""]])
+    Loader = DatabaseLoader([["../data/o_o_cardinality_testing.nt", ""]])
 
     data_graph = Loader.return_Databases()
     # for triple in data_graph:

@@ -1,7 +1,7 @@
 from src.utils.hash import MMH3, HashFunctionGenerator
 import numpy as np
 
-
+#TODO Lukas: Refacator CMS like queries
 class CMS:
     def __init__(self, width: int, depth: int = None, seeds: list = None, hash_functions: list = None,
                  hash_function_generator: HashFunctionGenerator = MMH3(), increment_decrement: bool = False):
