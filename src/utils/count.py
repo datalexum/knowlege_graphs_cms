@@ -60,46 +60,50 @@ def noise_count_object_object(cms_predicate1: CMS, cms_predicate2: CMS, predicat
         count += c1 * c2
     return count
 
-def initialize_count_subject_object(cms_predicate1: CMS, cms_predicate2: CMS, predicate1, predicate2, graph: Graph):
 
+def initialize_count_object_subject(cms_predicate1: CMS, cms_predicate2: CMS, predicate1, predicate2, graph: Graph):
     p1_result = predicate_query(graph, predicate1)
     for result in p1_result:
         cms_predicate1.count(result.obj)
-        cms_predicate1.printCMS()
-        print(f"{result.obj}")
-    print("all objects added")
+        # cms_predicate1.printCMS()
+        # print(f"{result.obj}")
+    # print("all objects added")
 
     p2_result = predicate_query(graph, predicate2)
     for result in p2_result:
         cms_predicate2.count(result.sub)
-        cms_predicate2.printCMS()
-        print(f"{result.sub}")
-    print("all subjects added")
+        # cms_predicate2.printCMS()
+        # print(f"{result.sub}")
+    # print("all subjects added")
 
     return p1_result, p2_result
 
-def count_subject_object(cms_predicate1: CMS, cms_predicate2: CMS, predicate1, predicate2, graph: Graph):
+
+def count_object_subject(cms_predicate1: CMS, cms_predicate2: CMS, predicate1, predicate2, graph: Graph):
     """
     cms_predicate1 for counting objects based on predicate1
     cms_predicate2 for counting subjects based on predicate2
     """
-    p1_result, p2_result = initialize_count_subject_object(cms_predicate1, cms_predicate2, predicate1, predicate2, graph)
+    p1_result, p2_result = initialize_count_object_subject(cms_predicate1, cms_predicate2, predicate1, predicate2,
+                                                           graph)
 
     results = set([result.sub for result in p2_result]) & set([result.obj for result in p1_result])
 
     count = 0
     for result in results:
-        print(result)
+        # print(result)
         c1 = cms_predicate1.get_min(result)
         c2 = cms_predicate2.get_min(result)
-        print(f"sketch p1: {result}: {c1}")
-        print(f"sketch p2: {result}: {c2}")
+        # print(f"sketch p1: {result}: {c1}")
+        # print(f"sketch p2: {result}: {c2}")
         count += c1 * c2
     return count
 
-def noise_count_subject_object(cms_predicate1: CMS, cms_predicate2: CMS, predicate1, predicate2, graph: Graph, noise_operation):
 
-    p1_result, p2_result = initialize_count_subject_object(cms_predicate1, cms_predicate2, predicate1, predicate2, graph)
+def noise_count_object_subject(cms_predicate1: CMS, cms_predicate2: CMS, predicate1, predicate2, graph: Graph,
+                               noise_operation):
+    p1_result, p2_result = initialize_count_object_subject(cms_predicate1, cms_predicate2, predicate1, predicate2,
+                                                           graph)
 
     results = set([result.sub for result in p2_result]) & set([result.obj for result in p1_result])
 
@@ -107,29 +111,30 @@ def noise_count_subject_object(cms_predicate1: CMS, cms_predicate2: CMS, predica
     cms_predicate1.remove_noise(noise_operation)
     cms_predicate2.remove_noise(noise_operation)
     for result in results:
-        print(result)
+        # print(result)
         c1 = cms_predicate1.get_min(result)
         c2 = cms_predicate2.get_min(result)
-        print(f"sketch p1: {result}: {c1}")
-        print(f"sketch p2: {result}: {c2}")
+        # print(f"sketch p1: {result}: {c1}")
+        # print(f"sketch p2: {result}: {c2}")
         count += c1 * c2
     return count
 
-def initialize_count_bound_subject_object(cms_predicate1: CMS, cms_predicate2: CMS, predicate1, predicate2,object, graph: Graph):
 
+def initialize_count_bound_object_subject(cms_predicate1: CMS, cms_predicate2: CMS, predicate1, predicate2, object,
+                                          graph: Graph):
     p1_result = predicate_query(graph, predicate1)
     for result in p1_result:
         cms_predicate1.count(result.obj)
-        cms_predicate1.printCMS()
-        print(f"{result.obj}")
-    print("all objects added")
+        # cms_predicate1.printCMS()
+        # print(f"{result.obj}")
+    # print("all objects added")
 
     p2_result = bound_predicate_query(graph, predicate2, object)
     for result in p2_result:
         cms_predicate2.count(result.sub)
-        cms_predicate2.printCMS()
-        print(f"{result.sub}")
-    print("all subjects added")
+        # cms_predicate2.printCMS()
+        # print(f"{result.sub}")
+    # print("all subjects added")
 
     return p1_result, p2_result
 
@@ -139,25 +144,27 @@ def count_bound_object_subject(cms_predicate1: CMS, cms_predicate2: CMS, predica
     cms_predicate1 for counting objects based on predicate1
     cms_predicate2 for counting subjects based on predicate2
     """
-    p1_result, p2_result = initialize_count_bound_subject_object(cms_predicate1, cms_predicate2, predicate1, predicate2,object, graph)
+    p1_result, p2_result = initialize_count_bound_object_subject(cms_predicate1, cms_predicate2, predicate1, predicate2,
+                                                                 object, graph)
 
     results = set([result.sub for result in p2_result]) & set([result.obj for result in p1_result])
 
     count = 0
     for result in results:
-        print(result)
+        # print(result)
         c1 = cms_predicate1.get_min(result)
         c2 = cms_predicate2.get_min(result)
-        print(f"sketch p1: {result}: {c1}")
-        print(f"sketch p2: {result}: {c2}")
+        # print(f"sketch p1: {result}: {c1}")
+        # print(f"sketch p2: {result}: {c2}")
         count += c1 * c2
     return count
 
 
-def noise_count_bound_subject_object(cms_predicate1: CMS, cms_predicate2: CMS, predicate1, predicate2,object, graph: Graph, noise_operation):
-
-    #TODO: andere joins und deren noise funktionen debuggen, sollten aber funktionieren, kann aber sein das irgendwo eine variable nicht geändert wurde
-    p1_result, p2_result = initialize_count_bound_subject_object(cms_predicate1, cms_predicate2, predicate1, predicate2,object,graph)
+def noise_count_bound_object_subject(cms_predicate1: CMS, cms_predicate2: CMS, predicate1, predicate2, object,
+                                     graph: Graph, noise_operation):
+    # TODO: andere joins und deren noise funktionen debuggen, sollten aber funktionieren, kann aber sein das irgendwo eine variable nicht geändert wurde
+    p1_result, p2_result = initialize_count_bound_object_subject(cms_predicate1, cms_predicate2, predicate1, predicate2,
+                                                                 object, graph)
 
     results = set([result.sub for result in p2_result]) & set([result.obj for result in p1_result])
 
@@ -165,10 +172,10 @@ def noise_count_bound_subject_object(cms_predicate1: CMS, cms_predicate2: CMS, p
     cms_predicate1.remove_noise(noise_operation)
     cms_predicate2.remove_noise(noise_operation)
     for result in results:
-        print(result)
+        # print(result)
         c1 = cms_predicate1.get_min(result)
         c2 = cms_predicate2.get_min(result)
-        print(f"sketch p1: {result}: {c1}")
-        print(f"sketch p2: {result}: {c2}")
+        # print(f"sketch p1: {result}: {c1}")
+        # print(f"sketch p2: {result}: {c2}")
         count += c1 * c2
     return count
