@@ -1,0 +1,14 @@
+<https://test.com/whatever#subject> <https://test.com/whatever#predicate> <https://test.com/whatever#bindobject>.
+<https://test.com/whatever#bindobject> <https://test.com/whatever#predicate2> "ENDOBJECT".
+<https://test.com/whatever#subject2> <https://test.com/whatever#predicate> <https://test.com/whatever#bindobject>.
+
+<https://test.com/whatever#subject2> <https://test.com/whatever#predicate> <https://test.com/whatever#bindobject2>.
+<https://test.com/whatever#bindobject2> <https://test.com/whatever#predicate2> "ENDOBJECT2".
+
+<https://test.com/whatever#subject> <https://test.com/whatever#predicate> <https://test.com/whatever#bindobject2>.
+<https://test.com/whatever#bindobject2> <https://test.com/whatever#predicate2> "ENDOBJECT2".
+<https://test.com/whatever#bindobject2> <https://test.com/whatever#predicate2> "ENDOBJECT".
+
+
+<https://test.com/whatever#test2> <https://test.com/whatever#predicate2> <https://test.com/whatever#test2>.
+<https://test.com/whatever#test> <https://test.com/whatever#predicate2> <https://test.com/whatever#test>.
