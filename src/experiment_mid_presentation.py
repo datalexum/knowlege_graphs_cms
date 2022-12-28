@@ -6,10 +6,12 @@ from src.cms.count_min_sketch import CMS
 from src.query_templates.queries import object_object_join
 import numpy as np
 from src.utils.count import count_object_object, noise_count_object_object
-from utils.hash import BasicHashFunctionGenerator
+from src.utils.error import q_error
+from src.utils.measure import measure_time
+from utils.hash import BasicHashFunction
 from rdflib import Graph
 
-NUMBER_RUNS = 5
+NUMBER_RUNS = 1
 PREDICATE_1 = 'parentCountry'
 PREDICATE_2 = 'nationality'
 PREFIX_1 = '<http://www.geonames.org/ontology#>'
@@ -29,7 +31,7 @@ def naive_run(graph):
     results = []
     for i in range(NUMBER_RUNS):
         logging.info(f"Naive Approach - Starting {i}/{NUMBER_RUNS}")
-        bhg = BasicHashFunctionGenerator()
+        bhg = BasicHashFunction()
         cms_1 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH, hash_function_generator=bhg)
         cms_2 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH, hash_function_generator=bhg)
         count = count_object_object(cms_1, cms_2, WHOLE_PREDICATE_1, WHOLE_PREDICATE_2, graph)
@@ -80,22 +82,24 @@ def independent_noiserem_median(graph):
         results.append(count)
     return results
 
+
 def naive_noiserem_median(graph):
     results = []
     for i in range(NUMBER_RUNS):
         logging.info(f"Naive Approach - Starting {i}/{NUMBER_RUNS}")
-        bhg = BasicHashFunctionGenerator()
+        bhg = BasicHashFunction()
         cms_1 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH, hash_function_generator=bhg)
         cms_2 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH, hash_function_generator=bhg)
         count = noise_count_object_object(cms_1, cms_2, WHOLE_PREDICATE_1, WHOLE_PREDICATE_2, graph, np.median)
         results.append(count)
     return results
 
+
 def naive_noiserem_min(graph):
     results = []
     for i in range(NUMBER_RUNS):
         logging.info(f"Naive Approach - Starting {i}/{NUMBER_RUNS}")
-        bhg = BasicHashFunctionGenerator()
+        bhg = BasicHashFunction()
         cms_1 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH, hash_function_generator=bhg)
         cms_2 = CMS(width=CMS_WIDTH, depth=CMS_DEPTH, hash_function_generator=bhg)
         count = noise_count_object_object(cms_1, cms_2, WHOLE_PREDICATE_1, WHOLE_PREDICATE_2, graph, np.amin)
@@ -104,87 +108,93 @@ def naive_noiserem_min(graph):
 
 
 def main():
-    #TODO: Untersuchen: Add/Sub ist bei einem groß genugen CMS schlechter, noise removal bei zu kleinen?
-    #
     optimize_sparql()
 
     data_graph = Graph(store=HDTStore("../watdiv/watdiv_10M_lars.hdt"))
 
     logging.info('Calculating ground truth...')
-    ground_count = ground_truth(data_graph)
+    ground_count, ellapsed_ground = measure_time(ground_truth, data_graph)
     logging.info('...Ground truth calculation finished.')
 
     print()
 
     logging.info('Starting naive CMS count...')
-    naive_counts = naive_run(data_graph)
+    naive_counts, ellapsed_naive = measure_time(naive_run, data_graph)
+    ellapsed_naive = ellapsed_naive / NUMBER_RUNS
     naive_count = np.mean(naive_counts)
     logging.info('...Naive CMS count finished.')
 
     print()
 
     logging.info('Starting independent CMS count...')
-    indep_counts = independent_hash(data_graph)
+    indep_counts, ellapsed_indep = measure_time(independent_hash, data_graph)
+    ellapsed_indep = ellapsed_indep / NUMBER_RUNS
     indep_count = np.mean(indep_counts)
     logging.info('...Independent CMS count finished.')
 
     print()
 
     logging.info('Starting independent addsub CMS count...')
-    addsub_counts = independent_addsub(data_graph)
+    addsub_counts, ellapsed_addsub = measure_time(independent_hash, data_graph)
+    ellapsed_addsub = ellapsed_addsub / NUMBER_RUNS
     addsub_count = np.mean(addsub_counts)
     logging.info('...Independent CMS count finished.')
 
     print()
 
     logging.info('Starting independent noise removal min CMS count...')
-    noiserem_min_counts = independent_noiserem_min(data_graph)
+    noiserem_min_counts, ellapsed_noiserem_min = measure_time(independent_noiserem_min, data_graph)
+    ellapsed_noiserem_min = ellapsed_noiserem_min / NUMBER_RUNS
     noiserem_min_count = np.mean(noiserem_min_counts)
     logging.info('...Independent CMS count finished.')
 
     print()
 
     logging.info('Starting independent noise removal min CMS count...')
-    noiserem_median_counts = independent_noiserem_min(data_graph)
+    noiserem_median_counts, ellapsed_noiserem_median = measure_time(naive_noiserem_median, data_graph)
+    ellapsed_noiserem_median = ellapsed_noiserem_median / NUMBER_RUNS
     noiserem_median_count = np.mean(noiserem_median_counts)
     logging.info('...Independent CMS count finished.')
 
     print()
 
     logging.info('Starting naive noise removal min CMS count...')
-    noiserem_naive_min_counts = naive_noiserem_min(data_graph)
+    noiserem_naive_min_counts, ellapsed_noiserem_naive_min = measure_time(naive_noiserem_min, data_graph)
+    ellapsed_noiserem_naive_min = ellapsed_noiserem_naive_min / NUMBER_RUNS
     noiserem_naive_min_count = np.mean(noiserem_median_counts)
     logging.info('...naive CMS count finished.')
 
     print()
 
     logging.info('Starting naive noise removal median CMS count...')
-    noiserem_naive_median_counts = naive_noiserem_median(data_graph)
+    noiserem_naive_median_counts, ellapsed_noiserem_naive_median = measure_time(naive_noiserem_median, data_graph)
+    ellapsed_noiserem_naive_median = ellapsed_noiserem_naive_median / NUMBER_RUNS
     noiserem_naive_median_count = np.mean(noiserem_median_counts)
     logging.info('...naive CMS count finished.')
 
     print()
 
+    results = {"Naive": (naive_count, ellapsed_naive),
+               "Independent": (indep_count, ellapsed_indep),
+               "Add/Sub": (addsub_count, ellapsed_addsub),
+               "Noise Removal min": (noiserem_min_count, ellapsed_noiserem_min),
+               "Noise Removal median": (noiserem_median_count, ellapsed_noiserem_median),
+               "Noise Removal min naive": (noiserem_naive_min_count, ellapsed_noiserem_naive_min),
+               "Noise Removal median naive": (noiserem_naive_median_count, ellapsed_noiserem_naive_median)}
+    print(results)
 
-
-    results = {"Naive": naive_count,
-               "Independent": indep_count,
-               "Add/Sub": addsub_count,
-               "Noise Removal min": noiserem_min_count,
-               "Noise Removal median": noiserem_median_count,
-               "Noise Removal min naive": noiserem_naive_min_count,
-               "Noise Removal median naive": noiserem_naive_median_count}
-
-    logging.info(f"Ground Truth:        {ground_count} Estimation Rate: 100%")
+    logging.info(f"Ground Truth:        {ground_count} Q-Error: 0%, Execution Time: {ellapsed_ground/1000000.0}ms")
     for key in results:
         logging.info(
-            f"{key}:\t\t\t{results[key]}\tEstimation Rate: {(results[key] / ground_count) * 100: .2f}%")
+            f"{key}:\t\t\t{results[key]}\tQ-Error: {q_error(results[key][0], ground_count) * 100: .2f}%, Execution Time: {results[key][1]/1000000.0}ms")
 
-    best = list(results.keys())[np.argmin(np.abs(np.array(list(results.values())) / ground_count - 1))]
+    q_error_list = np.fromiter((q_error(xi[0], ground_count) for xi in results.values()), float)
+
+    best = list(results.keys())[np.argmin(q_error_list)]
 
     print()
-
-    logging.info(f"The best approach is {best} with estimation rate {(results[best] / ground_count) * 100: .5f}%")
+    print(q_error_list)
+    logging.info(f"The best approach is {best} with Q-Error rate {np.min(q_error_list) *  100: .2f}%")
 
 
 if __name__ == '__main__':
