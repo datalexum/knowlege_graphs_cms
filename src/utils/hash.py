@@ -86,4 +86,4 @@ class UniversalHashFunction(HashFunctionGenerator, ABC):
     @staticmethod
     def _hash_function(max_value: int, m: int, a: List[int], b: int, word: str):
         x = sum([ord(letter) for letter in word])
-        return ((sum([a[i] * ord(word[i]) for i in range(len(word))]) + b) % m) % max_value
+        return ((sum([a[i % len(a)] * ord(word[i]) for i in range(len(word))]) + b) % m) % max_value
