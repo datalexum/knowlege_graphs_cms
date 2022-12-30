@@ -4,3 +4,4 @@ mmh3
 pycryptodome
 pybind11
 rdflib-hdt
+tqdm

@@ -23,9 +23,7 @@ CMS_DEPTH = 4
 
 
 def ground_truth(graph):
-    return len(object_object_join(data_graph=graph, predicate1=PREDICATE_1, predicate2=PREDICATE_2,
-                                  pred_prefix_1=PREFIX_1, pred_prefix_2=PREFIX_2))
-
+    return len(object_object_join(data_graph=graph, endings=(PREDICATE_1, PREDICATE_2), prefixes=(PREFIX_1, PREFIX_2)))
 
 def naive_run(graph):
     results = []

@@ -1,0 +1,11 @@
+{
+    "prefixes": [
+        ["<http://purl.org/goodrelations/>", "<http://purl.org/goodrelations/>"]
+    ],
+    "endings": [
+        ["validFrom","eligibleRegion"]
+    ],
+    "function": [
+        "count_object_subject"
+    ]
+}

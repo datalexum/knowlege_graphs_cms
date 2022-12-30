@@ -1,0 +1,11 @@
+{
+  "data_path": "/home/alsch/PycharmProjects/knowlege_graphs_cms/watdiv/watdiv_10M_lars.hdt",
+  "result_file": "result.csv",
+  "number_runs": 1,
+  "cms_width": 32,
+  "cms_depth": 4,
+  "hash_functions": ["BasicHashFunction", "UniversalHashFunction", "IndipendentHashFunction"],
+  "noise_removal_functions": ["amin", "median"],
+  "run_without_removal": true,
+  "add_sub": true
+}
