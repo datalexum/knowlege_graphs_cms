@@ -1,0 +1,12 @@
+{
+    "prefixes": [
+        ["<http://purl.org/ontology/mo/>", "<http://xmlns.com/foaf/>"]
+    ],
+    "endings": [
+        ["artist", "age"]
+    ],
+    "function": [
+        "count_object_subject"
+    ],
+    "cms_size": [32, 40960, 20480, 102400, 256, 512, 20480, 102400]
+}

@@ -1,11 +1,32 @@
 {
     "prefixes": [
-        ["<http://purl.org/goodrelations/>", "<http://purl.org/goodrelations/>"]
+        ["<http://www.geonames.org/ontology#>", "<http://schema.org/>"],
+        ["<http://purl.org/goodrelations/>", "<http://db.uwaterloo.ca/~galuc/wsdbm/>"],
+        ["<http://purl.org/stuff/rev#>", "<http://schema.org/>"],
+        ["<http://purl.org/goodrelations/>", "<http://purl.org/goodrelations/>"],
+        ["<http://purl.org/ontology/mo/>", "<http://schema.org/>"],
+        ["<http://purl.org/ontology/mo/>", "<http://xmlns.com/foaf/>"],
+        ["<http://db.uwaterloo.ca/~galuc/wsdbm/>", "<http://schema.org/>"],
+        ["<http://purl.org/stuff/rev#>", "<http://purl.org/stuff/rev#>"]
     ],
     "endings": [
-        ["validFrom","eligibleRegion"]
+        ["parentCountry", "nationality"],
+        ["reviewer", "actor"],
+        ["includes", "likes"],
+        ["offers", "includes"],
+        ["artist", "nationality"],
+        ["artist", "age"],
+        ["likes", "text"],
+        ["hasReview", "title"]
     ],
     "function": [
+        "count_object_object",
+        "count_object_object",
+        "count_object_object",
+        "count_object_subject",
+        "count_object_subject",
+        "count_object_subject",
         "count_object_subject"
-    ]
+    ],
+    "cms_size": [32, 40960, 20480, 102400, 256, 512, 20480, 102400]
 }

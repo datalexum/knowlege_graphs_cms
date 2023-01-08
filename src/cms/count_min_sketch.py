@@ -1,5 +1,6 @@
 from src.utils.hash import MMH3, HashFunctionGenerator
 import numpy as np
+import copy
 
 #TODO Lukas: Refacator CMS like queries
 class CMS:
@@ -21,7 +22,7 @@ class CMS:
             self.hash_functions = []
             if seeds is None:
                 if self.depth is not None:
-                    anmount = self.depth if not self.increment_decrement else self.depth * 2
+                    anmount = self.depth if not self.increment_decrement else copy.copy(self.depth) * 2
                     for i in range(anmount):
                         self.hash_functions.append(hash_function_generator.get_function(self.width))
                 else:
@@ -33,7 +34,8 @@ class CMS:
                     self.hash_functions.append(hash_function_generator.get_function(self.width, seed))
         else:
             raise CMSInputError("Either depth, hash_functions, or seeds has to be set!")
-        self.depth = len(self.hash_functions)
+
+        #self.depth = len(self.hash_functions)
         self.cms = np.zeros([self.depth, self.width], dtype=int)
         self.cms_copy = np.zeros([self.depth, self.width], dtype=int)
 
@@ -41,7 +43,7 @@ class CMS:
         number_functions = len(self.hash_functions)
         for row, function in enumerate(self.hash_functions):
             col = function(obj)
-            if self.increment_decrement and row > number_functions / 2:
+            if self.increment_decrement and row >= number_functions / 2:
                 self._sub(row - number_functions / 2, col)
             else:
                 self._add(row, col)
@@ -58,10 +60,8 @@ class CMS:
 
     def remove_noise(self, operation):
         self.cms_copy = np.copy(self.cms)
-        #print("Before", self.cms_copy)
         self.cms_copy = np.subtract(self.cms_copy, operation(self.cms_copy))
         np.where(self.cms_copy < 0, self.cms_copy, 0)
-        #print("After", self.cms_copy)
 
     def _add(self, row, col):
         self.cms[row, col] += 1

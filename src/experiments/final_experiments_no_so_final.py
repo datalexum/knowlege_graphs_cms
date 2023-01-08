@@ -1,3 +1,58 @@
+"""
+import csv
+import json
+import sys
+import time
+
+sys.path.append('./')
+
+import numpy as np
+from rdflib import Graph
+from rdflib_hdt import optimize_sparql, HDTStore
+
+from src.cms.count_min_sketch import CMS
+import src.query_templates.queries
+import src.utils.count
+from src.query_templates.queries import object_subject_join, object_object_join
+
+from tqdm import tqdm
+import src.utils.hash
+from src.utils.error import q_error
+from src.utils.measure import measure_time
+
+PREFIX = ["<http://purl.org/goodrelations/>", "<http://purl.org/goodrelations/>"]
+ENDINGS = ["offers", "includes"]
+
+#PREFIX.reverse()
+#ENDINGS.reverse()
+
+optimize_sparql()
+data_graph = Graph(store=HDTStore("/home/alsch/PycharmProjects/knowlege_graphs_cms/watdiv/watdiv_10M_lars.hdt"))
+
+
+def run_experiments():
+    print(len(object_subject_join(data_graph, PREFIX, ENDINGS)))
+
+    cms_1 = CMS(width=1024000, depth=4, increment_decrement=False,
+                hash_function_generator=src.utils.hash.BasicHashFunction())
+    cms_2 = CMS(width=1024000, depth=4, increment_decrement=False,
+                hash_function_generator=src.utils.hash.BasicHashFunction())
+
+    print(src.utils.count.count_object_subject(cms_1, cms_2, PREFIX, ENDINGS, data_graph))
+
+
+def main():
+    # In each Phase all 3 Join Types are tested, so for results regarding the overall comparison of Joins combine
+    # Phases 1-X
+    tqdm.write("Start")
+    run_experiments()
+
+
+if __name__ == '__main__':
+    main()
+"""
+
+
 import csv
 import json
 import sys
@@ -18,7 +73,7 @@ import src.utils.hash
 from src.utils.error import q_error
 from src.utils.measure import measure_time
 
-with open('/home/alsch/PycharmProjects/knowlege_graphs_cms/src/experiments/final_experiment_config.json', 'r') as f:
+with open('/home/alsch/PycharmProjects/knowlege_graphs_cms/src/experiments/final_experiment_config_2.json', 'r') as f:
     CONFIG = json.load(f)
 
 with open('/home/alsch/PycharmProjects/knowlege_graphs_cms/src/experiments/final_experiment_testdata_2.json', 'r') as f:
@@ -102,7 +157,7 @@ def run_experiments():
                                                     QUERY_DATA['endings'][0][1])
     p2_result = [result.sub for result in p2_result]
     tqdm.write("Calculation of p2 finished!")
-    
+
 
     global DUR_OFFSET
     #DUR_OFFSET = time.time_ns() - s
@@ -124,7 +179,6 @@ def run_experiments():
             writer.writerow(results_dict.keys())
             writer.writerows(zip(*results_dict.values()))
 
-
         results_dict = {
             "Endings": [],
             "Hash Function": [],
@@ -138,6 +192,8 @@ def run_experiments():
 
 
 def main():
+    start = time.time()
+    print("Starting Processes at: " + str(time.time()-start))
     tqdm.write("PHASE 0 - Ground Truths")
     calculate_ground_truth()
     tqdm.write(str(QUERY_DATA))
@@ -149,3 +205,8 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+
+
+
+
