@@ -72,6 +72,7 @@ from tqdm import tqdm
 import src.utils.hash
 from src.utils.error import q_error
 from src.utils.measure import measure_time
+import openpyxl
 
 with open('/home/alsch/PycharmProjects/knowlege_graphs_cms/src/experiments/final_experiment_config_2.json', 'r') as f:
     CONFIG = json.load(f)
@@ -107,7 +108,10 @@ results_dict = {
 }
 
 
-def calculate_ground_truth():
+def calculate_ground_truth(excelsheet, excelfile,start):
+    excelsheet["A3"] = "Ground Truths amount:"
+    excelsheet["B3"] = AMOUNT_QUERIES
+
     for idx in range(0, AMOUNT_QUERIES):
         function_name = '_'.join(QUERY_DATA['function'][idx].split('_')[1:]) + '_join'
         query_function = getattr(src.query_templates.queries, function_name)
@@ -117,6 +121,10 @@ def calculate_ground_truth():
         QUERY_DATA['ground_time'].append(elapsed_time)
         pbar.update(1)
 
+        excelsheet[f'A{idx+4}'] = QUERY_DATA['endings'][idx][0]
+        excelsheet[f'B{idx+4}'] = time.time()-start
+
+    excelfile.save("TimesAndBottlenecks.xlsx")
 
 def add_result(idx, hash_function, noise, add_sub, time_ellapsed, cms_count):
     results_dict["Hash Function"].append(hash_function.__name__)
@@ -130,18 +138,15 @@ def add_result(idx, hash_function, noise, add_sub, time_ellapsed, cms_count):
     tqdm.write(str(results_dict))
 
 
-def run_cms_count(add_sub, hash_function, idx, noise_rem_function, data_graph, p1_result=None, p2_result=None):
-    cms_1 = CMS(width=QUERY_DATA['cms_size'][idx], depth=CONFIG['cms_depth'], increment_decrement=add_sub,
-                hash_function_generator=hash_function())
-    cms_2 = CMS(width=QUERY_DATA['cms_size'][idx], depth=CONFIG['cms_depth'], increment_decrement=add_sub,
-                hash_function_generator=hash_function())
+def run_cms_count(add_sub, hash_function, idx, noise_rem_function, data_graph, p1, p2, cms_1, cms_2):
+
     count_function = getattr(src.utils.count, QUERY_DATA['function'][idx])
     count, e_time = measure_time(count_function, cms_1, cms_2, QUERY_DATA['prefixes'][idx], QUERY_DATA['endings'][idx],
                                  data_graph, noise_rem_function, p1_result, p2_result)
     add_result(idx, hash_function, noise_rem_function, add_sub, e_time + DUR_OFFSET, count)
 
 
-def run_experiments():
+def run_experiments(excelsheet,excelfile,start):
     global results_dict
     noise_removal_functions = [getattr(np, i) for i in CONFIG['noise_removal_functions']]
     if CONFIG['run_without_removal']: noise_removal_functions.append(None)
@@ -163,16 +168,51 @@ def run_experiments():
     #DUR_OFFSET = time.time_ns() - s
     tqdm.write(f"Calculating results took {DUR_OFFSET/1e+9} Seconds!")
     """
+    current_excel_index = AMOUNT_QUERIES+5
+    excelsheet[f'A{current_excel_index}'] = "Starting CMS tests number runs = " + str(CONFIG['number_runs'])
+    lazinesscounter = 1
     for idx in range(AMOUNT_QUERIES):
-        for hash_function in CONFIG["hash_functions"]:
-            for add_sub in [True, False] if CONFIG['add_sub'] else [False]:
-                for noise_rem_function in noise_removal_functions:
-                    for run in range(CONFIG['number_runs']):
+        excelsheet[f'A{current_excel_index+lazinesscounter}'] = "Starte nächste Query"
+        excelsheet[f'B{current_excel_index+lazinesscounter}'] = QUERY_DATA['endings'][idx][0]
+        lazinesscounter = lazinesscounter+1
+
+        #p1 & p2
+        p1 = 0
+        p2 = 0
+        for run in range(CONFIG['number_runs']):
+            cms_1 = CMS(width=QUERY_DATA['cms_size'][idx], depth=CONFIG['cms_depth'], increment_decrement=add_sub,
+                        hash_function_generator=hash_function())
+            cms_2 = CMS(width=QUERY_DATA['cms_size'][idx], depth=CONFIG['cms_depth'], increment_decrement=add_sub,
+                        hash_function_generator=hash_function())
+            for hash_function in CONFIG["hash_functions"]:
+                for add_sub in [True, False] if CONFIG['add_sub'] else [False]:
+                    for noise_rem_function in noise_removal_functions:
                         if global_index >= START_FROM:
+
+                            excelsheet[f'A{current_excel_index+lazinesscounter}'] = "Starte nächste Config"
+                            excelsheet[f'B{current_excel_index+lazinesscounter}'] = hash_function
+                            if add_sub:
+                                excelsheet[f'C{current_excel_index+lazinesscounter}'] = "add_sub"
+                            else:
+                                excelsheet[f'C{current_excel_index+lazinesscounter}'] = "no add_sub"
+                            excelsheet[f'D{current_excel_index+lazinesscounter}'] = "noise_rem_function: "
+                            excelsheet[f'E{current_excel_index+lazinesscounter}'] = str(noise_rem_function)
+                            excelsheet[f'F{current_excel_index+lazinesscounter}'] = "run NR: "
+                            excelsheet[f'G{current_excel_index+lazinesscounter}'] = run+1
+                            lazinesscounter = lazinesscounter+1
+
                             run_cms_count(add_sub, getattr(src.utils.hash, hash_function), idx, noise_rem_function,
-                                          data_graph)
+                                          data_graph, p1, p2, cms_1,cms_2)
+                            excelsheet[f'A{current_excel_index+lazinesscounter}'] = "run done"
+                            excelsheet[f'B{current_excel_index+lazinesscounter}'] =  time.time()-start
+                            lazinesscounter = lazinesscounter+1
                             pbar.update(1)
                         global_index += 1
+
+        excelsheet[f'A{current_excel_index+lazinesscounter}'] = "Query beendet " + QUERY_DATA['endings'][idx][0]
+        excelsheet[f'B{current_excel_index+lazinesscounter}'] = time.time()-start
+        lazinesscounter = lazinesscounter+3
+
 
         with open(f"{CONFIG['result_file']}{idx} + .txt", 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
@@ -190,18 +230,26 @@ def run_experiments():
             "Count": []
         }
 
+    excelfile.save("All times.xlsx")
 
 def main():
+    excelfile = openpyxl.Workbook()
+    excelsheet = excelfile.active
+    excelsheet["A1"] = "Task"
+    excelsheet["B1"] = "Current Time"
+
     start = time.time()
-    print("Starting Processes at: " + str(time.time()-start))
+    excelsheet["A2"] = "Ground truth Start"
+    excelsheet["B2"] = time.time()-start
+
     tqdm.write("PHASE 0 - Ground Truths")
-    calculate_ground_truth()
+    calculate_ground_truth(excelsheet, excelfile,start)
     tqdm.write(str(QUERY_DATA))
     # In each Phase all 3 Join Types are tested, so for results regarding the overall comparison of Joins combine
     # Phases 1-X
     tqdm.write("PHASE 1 - Test without Noise Removal")
-    run_experiments()
-
+    run_experiments(excelsheet,excelfile,start)
+    excelfile.save("TimesAndBottlenecks.xlsx")
 
 if __name__ == '__main__':
     main()
