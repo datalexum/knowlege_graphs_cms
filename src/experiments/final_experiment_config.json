@@ -1,5 +1,5 @@
 {
-  "data_path": "/home/alsch/PycharmProjects/knowlege_graphs_cms/watdiv/watdiv_10M_lars.hdt",
+  "data_path": "/home/alsch/PycharmProjects/knowlege_graphs_cms/data/watdiv/watdiv_10M_lars.hdt",
   "result_file": "result.csv",
   "number_runs": 5,
   "cms_width": 32,

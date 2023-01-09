@@ -1,3 +1,4 @@
+import copy
 import csv
 import json
 import sys
@@ -75,55 +76,63 @@ def add_result(idx, hash_function, noise, add_sub, time_ellapsed, cms_count):
     tqdm.write(str(results_dict))
 
 
-def run_cms_count(add_sub, hash_function, idx, noise_rem_function, data_graph, p1_result=None, p2_result=None):
-    cms_1 = CMS(width=QUERY_DATA['cms_size'][idx], depth=CONFIG['cms_depth'], increment_decrement=add_sub,
-                hash_function_generator=hash_function())
-    cms_2 = CMS(width=QUERY_DATA['cms_size'][idx], depth=CONFIG['cms_depth'], increment_decrement=add_sub,
-                hash_function_generator=hash_function())
+
+def run_cms_count(add_sub, hash_function, idx, noise_rem_function, data_graph, p1, p2, cms_1, cms_2):
     count_function = getattr(src.utils.count, QUERY_DATA['function'][idx])
-    count, e_time = measure_time(count_function, cms_1, cms_2, QUERY_DATA['prefixes'][idx], QUERY_DATA['endings'][idx],
-                                 data_graph, noise_rem_function, p1_result, p2_result)
+    count, e_time = count_function(copy.deepcopy(cms_1), copy.deepcopy(cms_2), QUERY_DATA['prefixes'][idx],
+                                   QUERY_DATA['endings'][idx],
+                                   data_graph, True, noise_rem_function, p1, p2)
     add_result(idx, hash_function, noise_rem_function, add_sub, e_time + DUR_OFFSET, count)
 
 
-def run_experiments():
+def run_experiments(start):
     global results_dict
     noise_removal_functions = [getattr(np, i) for i in CONFIG['noise_removal_functions']]
     if CONFIG['run_without_removal']: noise_removal_functions.append(None)
-    global_index = 0
-    """
-    tqdm.write("Precalculating results...")
-    s = time.time_ns()
-    p1_result = src.utils.count.obj_predicate_query(data_graph, QUERY_DATA['prefixes'][0][0],
-                                                    QUERY_DATA['endings'][0][0])
-    p1_result = [result.obj for result in p1_result]
-    tqdm.write("Calculation of p1 finished!")
-    p2_result = src.utils.count.sub_predicate_query(data_graph, QUERY_DATA['prefixes'][0][1],
-                                                    QUERY_DATA['endings'][0][1])
-    p2_result = [result.sub for result in p2_result]
-    tqdm.write("Calculation of p2 finished!")
-    
 
-    global DUR_OFFSET
-    #DUR_OFFSET = time.time_ns() - s
-    tqdm.write(f"Calculating results took {DUR_OFFSET/1e+9} Seconds!")
-    """
     for idx in range(AMOUNT_QUERIES):
-        for hash_function in CONFIG["hash_functions"]:
-            for add_sub in [True, False] if CONFIG['add_sub'] else [False]:
-                for noise_rem_function in noise_removal_functions:
-                    for run in range(CONFIG['number_runs']):
-                        if global_index >= START_FROM:
-                            run_cms_count(add_sub, getattr(src.utils.hash, hash_function), idx, noise_rem_function,
-                                          data_graph)
-                            pbar.update(1)
-                        global_index += 1
+
+        p1_result = src.query_templates.queries.obj_predicate_query(data_graph, QUERY_DATA['prefixes'][idx][0],
+                                                                    QUERY_DATA['endings'][idx][0])
+        p1 = [results.result for results in p1_result]
+
+        countname = QUERY_DATA['function'][idx]
+        if countname == 'count_object_object':
+            p2_result = src.query_templates.queries.obj_predicate_query(data_graph, QUERY_DATA['prefixes'][idx][1],
+                                                                        QUERY_DATA['endings'][idx][1])
+        elif countname == 'count_object_subject':
+            p2_result = src.query_templates.queries.sub_predicate_query(data_graph, QUERY_DATA['prefixes'][idx][1],
+                                                                        QUERY_DATA['endings'][idx][1])
+        elif countname == 'count_bound_object_subject':
+            p2_result = src.query_templates.queries.bound_sub_predicate_query(data_graph, QUERY_DATA['prefixes'][idx][1],
+                                                                              QUERY_DATA['endings'][idx][1])
+        p2 = [results.result for results in p2_result]
+
+        for add_sub in [True, False] if CONFIG['add_sub'] else [False]:
+            for hash_function in CONFIG["hash_functions"]:
+                hash_function = getattr(src.utils.hash, hash_function)
+                for run in range(CONFIG['number_runs']):
+                    cms_1 = CMS(width=QUERY_DATA['cms_size'][idx], depth=CONFIG['cms_depth'],
+                                increment_decrement=add_sub,
+                                hash_function_generator=hash_function())
+                    for result in p1:
+                        cms_1.count(result)
+
+                    cms_2 = CMS(width=QUERY_DATA['cms_size'][idx], depth=CONFIG['cms_depth'],
+                                increment_decrement=add_sub,
+                                hash_function_generator=hash_function())
+                    for result in p2:
+                        cms_2.count(result)
+
+                    for noise_rem_function in noise_removal_functions:
+                        run_cms_count(add_sub, hash_function, idx, noise_rem_function,
+                                      data_graph, p1, p2, cms_1, cms_2)
+                        pbar.update(1)
 
         with open(f"{CONFIG['result_file']}{idx} + .txt", 'w', newline='') as csvfile:
             writer = csv.writer(csvfile)
             writer.writerow(results_dict.keys())
             writer.writerows(zip(*results_dict.values()))
-
 
         results_dict = {
             "Endings": [],

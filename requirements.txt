@@ -1,7 +1,8 @@
-numpy
-rdflib
-mmh3
+numpy~=1.24.1
+rdflib~=6.2.0
 pycryptodome
 pybind11
 rdflib-hdt
-tqdm
+tqdm~=4.64.1
+openpyxl~=3.0.10
+Crypto~=1.4.1

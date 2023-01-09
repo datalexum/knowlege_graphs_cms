@@ -1,0 +1,19 @@
+Endings,Hash Function,Noise Removal,Ellapsed Time,Join Type,Add/Sub,Q_Error,Count
+"['artist', 'age']",BasicHashFunction,amin,12420550,object subject,True,4198.324632952692,2574186
+"['artist', 'age']",BasicHashFunction,median,10979927,object subject,True,1507.546492659054,924739.0
+"['artist', 'age']",BasicHashFunction,No,11220347,object subject,True,4198.324632952692,2574186
+"['artist', 'age']",UniversalHashFunction,amin,29111719,object subject,True,7.99510603588907,5514
+"['artist', 'age']",UniversalHashFunction,median,28909190,object subject,True,36.06688417618271,22722.0
+"['artist', 'age']",UniversalHashFunction,No,28812718,object subject,True,7.99510603588907,5514
+"['artist', 'age']",IndipendentHashFunction,amin,10756787,object subject,True,549.4584013050571,337431
+"['artist', 'age']",IndipendentHashFunction,median,10326922,object subject,True,682.2259380097879,-417591.5
+"['artist', 'age']",IndipendentHashFunction,No,10342912,object subject,True,549.4584013050571,337431
+"['artist', 'age']",BasicHashFunction,amin,11692854,object subject,False,32386.42251223491,19853490
+"['artist', 'age']",BasicHashFunction,median,11197425,object subject,False,1138.300163132137,698391.0
+"['artist', 'age']",BasicHashFunction,No,11156278,object subject,False,49165.8189233279,30139260
+"['artist', 'age']",UniversalHashFunction,amin,31531689,object subject,False,529.574225122349,325242
+"['artist', 'age']",UniversalHashFunction,median,29438212,object subject,False,162.03752039151712,99942.0
+"['artist', 'age']",UniversalHashFunction,No,28236488,object subject,False,20106.791190864602,12326076
+"['artist', 'age']",IndipendentHashFunction,amin,10737122,object subject,False,48007.871125611746,29429438
+"['artist', 'age']",IndipendentHashFunction,median,10446276,object subject,False,7205.544861337684,4417612.0
+"['artist', 'age']",IndipendentHashFunction,No,10092712,object subject,False,48491.25774877651,29725754
