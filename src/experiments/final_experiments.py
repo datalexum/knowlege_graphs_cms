@@ -27,7 +27,7 @@ with open('/home/alsch/PycharmProjects/knowlege_graphs_cms/src/experiments/final
 with open('/home/alsch/PycharmProjects/knowlege_graphs_cms/src/experiments/final_experiment_testdata_2.json', 'r') as f:
     QUERY_DATA = json.load(f)
 
-QUERY_DATA['ground_result'] = []
+QUERY_DATA['ground_result'] = [] if 'ground_result' not in QUERY_DATA.keys() else QUERY_DATA['ground_result']
 QUERY_DATA['ground_time'] = []
 
 AMOUNT_QUERIES = len(QUERY_DATA['function'])
@@ -86,11 +86,13 @@ def run_cms_count(add_sub, hash_function, idx, noise_rem_function, data_graph, p
                                    data_graph, True, noise_rem_function, p1, p2)
     add_result(idx, hash_function, noise_rem_function, add_sub, e_time + DUR_OFFSET, count)
 
+
 def generate_file_name(join: str, prefix, ending):
-    name = join + '_' + prefix + '_' + ending + '.pickle'
+    name = join + '_' + prefix[1:-1].replace('/', '_') + ending + '.pickle'
     return name
 
-def run_experiments(start):
+
+def run_experiments():
     global results_dict
     noise_removal_functions = [getattr(np, i) for i in CONFIG['noise_removal_functions']]
     if CONFIG['run_without_removal']: noise_removal_functions.append(None)
@@ -98,24 +100,26 @@ def run_experiments(start):
     for idx in range(AMOUNT_QUERIES):
 
         files = os.listdir(CONFIG['precalculated_path'])
-        p1_filename = generate_file_name('count_object_object', QUERY_DATA['prefixes'][idx][0], QUERY_DATA['endings'][idx][0])
+        p1_filename = generate_file_name('count_object_object', QUERY_DATA['prefixes'][idx][0],
+                                         QUERY_DATA['endings'][idx][0])
 
         if p1_filename in files:
             with open(os.path.join(CONFIG['precalculated_path'], p1_filename), 'rb') as p1_file:
                 p1 = pickle.load(p1_file)
         else:
             p1_result = src.query_templates.queries.obj_predicate_query(data_graph, QUERY_DATA['prefixes'][idx][0],
-                                                        QUERY_DATA['endings'][idx][0])
+                                                                        QUERY_DATA['endings'][idx][0])
             p1 = [results.result for results in p1_result]
             with open(os.path.join(CONFIG['precalculated_path'], p1_filename), 'wb') as p1_file:
-                pickle.dump(p1_file)
+                pickle.dump(p1, p1_file)
 
         countname = QUERY_DATA['function'][idx]
-        p2_filename = generate_file_name('count_object_object', QUERY_DATA['prefixes'][idx][1], QUERY_DATA['endings'][idx][1])
+        p2_filename = generate_file_name('count_object_object', QUERY_DATA['prefixes'][idx][1],
+                                         QUERY_DATA['endings'][idx][1])
 
         if p2_filename in files:
             with open(os.path.join(CONFIG['precalculated_path'], p2_filename), 'rb') as p2_file:
-                p1 = pickle.load(p2_file)
+                p2 = pickle.load(p2_file)
         else:
             if countname == 'count_object_object':
                 p2_result = src.query_templates.queries.obj_predicate_query(data_graph, QUERY_DATA['prefixes'][idx][1],
@@ -124,11 +128,12 @@ def run_experiments(start):
                 p2_result = src.query_templates.queries.sub_predicate_query(data_graph, QUERY_DATA['prefixes'][idx][1],
                                                                             QUERY_DATA['endings'][idx][1])
             elif countname == 'count_bound_object_subject':
-                p2_result = src.query_templates.queries.bound_sub_predicate_query(data_graph, QUERY_DATA['prefixes'][idx][1],
+                p2_result = src.query_templates.queries.bound_sub_predicate_query(data_graph,
+                                                                                  QUERY_DATA['prefixes'][idx][1],
                                                                                   QUERY_DATA['endings'][idx][1])
             p2 = [results.result for results in p2_result]
             with open(os.path.join(CONFIG['precalculated_path'], p2_filename), 'wb') as p2_file:
-                pickle.dump(p2_file)
+                pickle.dump(p2, p2_file)
 
         for add_sub in [True, False] if CONFIG['add_sub'] else [False]:
             for hash_function in CONFIG["hash_functions"]:
@@ -170,7 +175,7 @@ def run_experiments(start):
 
 def main():
     tqdm.write("PHASE 0 - Ground Truths")
-    if 'ground_result' not in QUERY_DATA.keys():
+    if len(QUERY_DATA['ground_result']) == 0:
         calculate_ground_truth()
     tqdm.write(str(QUERY_DATA))
     # In each Phase all 3 Join Types are tested, so for results regarding the overall comparison of Joins combine
