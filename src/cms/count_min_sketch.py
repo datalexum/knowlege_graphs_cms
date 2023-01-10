@@ -1,4 +1,4 @@
-from src.utils.hash import MMH3, HashFunctionGenerator
+from src.utils.hash import HashFunctionGenerator, UniversalHashFunction
 import numpy as np
 import copy
 
