@@ -1,6 +1,6 @@
 {
   "data_path": "/home/alsch/PycharmProjects/knowlege_graphs_cms/data/watdiv/watdiv_10M_lars.hdt",
-  "result_file": "result",
+  "result_file": "result.csv",
   "number_runs": 1,
   "cms_width": 1024,
   "cms_depth": 4,

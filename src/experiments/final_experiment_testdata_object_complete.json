@@ -1,0 +1,31 @@
+{
+    "prefixes": [
+        ["<http://purl.org/goodrelations/>", "<http://db.uwaterloo.ca/~galuc/wsdbm/>"],
+        ["<http://db.uwaterloo.ca/~galuc/>", "<http://db.uwaterloo.ca/~galuc/wsdbm/>"],
+
+        ["<http://db.uwaterloo.ca/~galuc/>", "<http://xmlns.com/foaf/>"],
+        ["<http://db.uwaterloo.ca/~galuc/>", "<http://purl.org/goodrelations/>"],
+        ["<http://purl.org/goodrelations/>", "<http://db.uwaterloo.ca/~galuc/wsdbm/>"],
+        ["<http://purl.org/goodrelations/>", "<http://db.uwaterloo.ca/~galuc/wsdbm/>"]
+    ],
+    "endings": [
+        ["reviewer", "friendOf"],
+        ["hasGenre", "hasGenre"],
+        ["subscribes", "homepage"],
+        ["likes", "includes"],
+        ["includes", "likes"],
+        ["includes", "purchaseFor"]
+    ],
+    "function": [
+        "count_object_object",
+        "count_object_object",
+        "count_object_object",
+        "count_object_object",
+        "count_object_object",
+
+        "count_object_object"
+    ],
+    "cms_size": [1024, 1024, 1024, 1024, 1024,
+                 1024, 1024],
+    "ground_result": [6719111, 40105137, 338432, 383265, 383265, 494821]
+}

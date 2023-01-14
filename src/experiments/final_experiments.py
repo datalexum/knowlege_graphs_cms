@@ -24,7 +24,7 @@ from src.utils.measure import measure_time
 with open('/home/alsch/PycharmProjects/knowlege_graphs_cms/src/experiments/final_experiment_config.json', 'r') as f:
     CONFIG = json.load(f)
 
-with open('/home/alsch/PycharmProjects/knowlege_graphs_cms/src/experiments/final_experiment_testdata_2.json', 'r') as f:
+with open('/home/alsch/PycharmProjects/knowlege_graphs_cms/src/experiments/final_experiment_testdata_object_complete.json', 'r') as f:
     QUERY_DATA = json.load(f)
 
 QUERY_DATA['ground_result'] = [] if 'ground_result' not in QUERY_DATA.keys() else QUERY_DATA['ground_result']
@@ -56,14 +56,17 @@ results_dict = {
 
 
 def calculate_ground_truth():
-    for idx in range(0, AMOUNT_QUERIES):
+    for idx in tqdm(range(0, len(QUERY_DATA['endings'])), desc='Calculating ground truth'):
         function_name = '_'.join(QUERY_DATA['function'][idx].split('_')[1:]) + '_join'
         query_function = getattr(src.query_templates.queries, function_name)
         result, elapsed_time = measure_time(query_function, data_graph,
                                             QUERY_DATA['prefixes'][idx], QUERY_DATA['endings'][idx])
         QUERY_DATA['ground_result'].append(len(result))
+        print(result)
         QUERY_DATA['ground_time'].append(elapsed_time)
         pbar.update(1)
+        with open('ground_truths.pickle', 'wb') as f:
+            pickle.dump(QUERY_DATA, f)
 
 
 def add_result(idx, hash_function, noise, add_sub, time_ellapsed, cms_count):
@@ -76,7 +79,7 @@ def add_result(idx, hash_function, noise, add_sub, time_ellapsed, cms_count):
     results_dict["Count"].append(cms_count)
     results_dict["Endings"].append(QUERY_DATA['endings'][idx])
     tqdm.write(str(results_dict))
-
+    # TODO qerror
 
 
 def run_cms_count(add_sub, hash_function, idx, noise_rem_function, data_graph, p1, p2, cms_1, cms_2):
