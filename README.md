@@ -50,7 +50,7 @@ WSL 2.
 
 Contributors names and contact info
 
-Alexander Schröder - alexander.schroeder-t59@rub.de - [LinkedIn](https://https://de.linkedin.com/in/alexander-schr%C3%B6der-26a1b018a)<br>
+Alexander Schröder - alexander.schroeder-t59@rub.de - [LinkedIn](https://de.linkedin.com/in/alexander-schr%C3%B6der-26a1b018a)<br>
 Lukas Trost - lukas.trost@rub.de - [LinkedIn](https://example.com)
 
 
