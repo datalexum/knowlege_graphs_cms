@@ -2,7 +2,7 @@
 
 ## Description
 
-Experiments to explore the use of count min sketches for the cardinallity estimation of joins on knowelege graphs.
+Experiments to explore the use of count min sketches for the cardinallity estimation of joins on knoweledge graphs.
 
 ## Getting Started
 
